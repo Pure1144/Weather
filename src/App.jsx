@@ -4,11 +4,12 @@ import { getAllCities } from "./utils/get-all-cities";
 import { BgColors } from "./components/BgColors";
 import { Circles } from "./components/Circles";
 import { WeatherInfo } from "./components/WeatherInfo";
+import { getDayAndNightForecast } from "./utils/get-day-and-night-forecast";
 function App() {
   const [count, setCount] = useState(0);
   const [searchValue, setSearchValue] = useState("");
   const [allCities, setAllCities] = useState([]);
-  const [selectedCity, setSelectedCity] = useState("Ulaanbaatar,Mongolia");
+  const [selectedCity, setSelectedCity] = useState("Ulaanbaatar, Mongolia");
   const [filteredData, setFilteredData] = useState([]);
   const [weatherData, setWeatherData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
@@ -35,6 +36,7 @@ function App() {
         }
          
   };
+  
   const weatherApiKey ="183c559ec16e4bff8e765408251501"
   const getWeatherData = async() => {
     setIsLoading(true)
@@ -43,8 +45,20 @@ function App() {
         `https://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${selectedCity}`
         );
        const result = await response.json();
-       setWeatherData(result);
-       console.log(result);
+
+       const dayProps = {
+        city: result.location?.name,
+        temperature: result?.forecast.forecastday[0]?.day?.maxtemp_c,
+        condition: result?.forecast.forecastday[0]?.day?.condition.text,
+     };
+     const nightProps ={
+        ...dayProps,
+        temperature: result?.forecast.forecastday[0]?.day?.mintemp_c,
+     };
+     console.log({dayProps, nightProps});
+     
+     
+       setWeatherData({dayProps, nightProps});
        
     } catch (error){
       console.log(error);
@@ -78,7 +92,7 @@ const handleClickCity = (city) =>{
   useEffect(() => {
     getCountries()    
     getWeatherData();
-             console.log("iueuf");
+             console.log("WeatherData");
              
 }, []);
 
@@ -87,7 +101,7 @@ const handleClickCity = (city) =>{
 <div className="relative w-screen h-screen">
 <BgColors/>
 <Circles/>
-<WeatherInfo searchValue={searchValue} onChange={onChange} filteredData={filteredData} handleClickCity={handleClickCity} />
+<WeatherInfo weatherData={weatherData} searchValue={searchValue} onChange={onChange} filteredData={filteredData} handleClickCity={handleClickCity} />
 </div>
   );
 }
