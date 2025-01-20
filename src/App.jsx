@@ -4,7 +4,7 @@ import { getAllCities } from "./utils/get-all-cities";
 import { BgColors } from "./components/BgColors";
 import { Circles } from "./components/Circles";
 import { WeatherInfo } from "./components/WeatherInfo";
-import { getDayAndNightForecast } from "./utils/get-day-and-night-forecast";
+import {  getDayAndNightForecast} from "./utils/get-day-and-night-forecast";
 function App() {
   const [count, setCount] = useState(0);
   const [searchValue, setSearchValue] = useState("");
@@ -14,95 +14,88 @@ function App() {
   const [weatherData, setWeatherData] = useState({});
   const [isLoading, setIsLoading] = useState(false);
 
+  const getCountries = async () => {
+    try {
+      const response = await fetch(
+        "https://countriesnow.space/api/v0.1/countries"
+      );
+      console.log(response);
 
-  const getCountries = async() => {
-        try{
-          const response = await fetch(
-            "https://countriesnow.space/api/v0.1/countries"
-            );
-          console.log(response);
-          
-         
-           const result =  await response.json();
-           console.log(result);
+      const result = await response.json();
+      console.log(result);
 
-           const countries = result.data;
-           const cities = getAllCities(countries);
-           setAllCities(cities); 
-           
-        } catch (error){
-          console.log(error);
-          
-        }
-         
+      const countries = result.data;
+      const cities = getAllCities(countries);
+      setAllCities(cities);
+    } catch (error) {
+      console.log(error);
+    }
   };
-  
-  const weatherApiKey ="183c559ec16e4bff8e765408251501"
-  const getWeatherData = async() => {
-    setIsLoading(true)
-    try{
+
+  const weatherApiKey = "183c559ec16e4bff8e765408251501";
+  const getWeatherData = async () => {
+    setIsLoading(true);
+    try {
       const response = await fetch(
         `https://api.weatherapi.com/v1/forecast.json?key=${weatherApiKey}&q=${selectedCity}`
-        );
-       const result = await response.json();
+      );
+      const result = await response.json();
 
-       const dayProps = {
+      const dayProps = {
         city: result.location?.name,
         temperature: result?.forecast.forecastday[0]?.day?.maxtemp_c,
         condition: result?.forecast.forecastday[0]?.day?.condition.text,
-     };
-     const nightProps ={
+      };
+      const nightProps = {
         ...dayProps,
         temperature: result?.forecast.forecastday[0]?.day?.mintemp_c,
-     };
-     console.log({dayProps, nightProps});
-     
-     
-       setWeatherData({dayProps, nightProps});
-       
-    } catch (error){
-      console.log(error);
-      
-    }finally{
-      setIsLoading(false)
-    }
-     
-};
+      };
+      console.log({ dayProps, nightProps });
 
-const handleClickCity = (city) =>{
-  //set
-}
+      setWeatherData({ dayProps, nightProps });
+    } catch (error) {
+      console.log(error);
+    } finally {
+      setIsLoading(false);
+    }
+  };
+
+  const handleClickCity = (city) => {
+    //alert(city)
+    setSelectedCity(city);
+  };
 
   const onChange = (event) => {
     setSearchValue(event.target.value);
     const filtered = allCities
-    .filter((el)=>el.toLowerCase().startsWith(searchValue.toLowerCase()))
-    .slice(0, 2);
+      .filter((el) => el.toLowerCase().startsWith(searchValue.toLowerCase()))
+      .slice(0, 4);
 
     setFilteredData(filtered);
   };
 
-    useEffect(() => {
-                             
-      getWeatherData();
-     
+  useEffect(() => {
+    getWeatherData();
   }, [selectedCity]);
 
-
   useEffect(() => {
-    getCountries()    
+    getCountries();
     getWeatherData();
-             console.log("WeatherData");
-             
-}, []);
-
+    console.log("WeatherData");
+  }, []);
 
   return (
-<div className="relative w-screen h-screen">
-<BgColors/>
-<Circles/>
-<WeatherInfo weatherData={weatherData} searchValue={searchValue} onChange={onChange} filteredData={filteredData} handleClickCity={handleClickCity} />
-</div>
+    <div className="relative w-screen h-screen">
+      <BgColors />
+      <Circles />
+      <WeatherInfo
+        weatherData={weatherData}
+        searchValue={searchValue}
+        onChange={onChange}
+        filteredData={filteredData}
+        handleClickCity={handleClickCity}
+      />
+    </div>
   );
 }
 

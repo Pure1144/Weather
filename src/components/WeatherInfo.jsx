@@ -1,4 +1,4 @@
-import SunImage from "../assets/sun.png";
+// import SunImage from "../assets/sun.webp";
 
 export const WeatherInfo = (props) => {
   const { searchValue, onChange, filteredData, handleClickCity, weatherData } = props;
@@ -46,13 +46,15 @@ export const WeatherInfo = (props) => {
               
             </div>
             <div>
-                <img src={SunImage} className="w-[200px] h-[200px]"/>
+                <img src="/sun.webp" className="w-[200px] h-[200px]"/>
  
 
               </div>
               <div class="text-transparent bg-clip-text font-extrabold text-[110px] -mt-10 bg-gradient-to-b from-black to-white">
                 {weatherData?.dayProps?.temperature || "test"}
+            
               </div>
+            
 
           </div>
         </div>
@@ -61,5 +63,7 @@ export const WeatherInfo = (props) => {
         <div className="w-[600px] h-[900px] bg-orange-300">card</div>
       </div>
     </div>
+    
+    
   );
 };
