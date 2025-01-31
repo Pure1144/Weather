@@ -5,5 +5,5 @@ export const BgColors = () => {
             <div className="w-1/2 h-full bg-green-200"></div>
         </div>
     )
-    t
+    
 }
